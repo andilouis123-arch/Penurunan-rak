@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koordinat Barang Turun — NDC J3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#132038;
+    --blue:#2B6CB0;
+    --blue-dark:#1E4E8C;
+    --teal:#0EA5A4;
+    --amber:#F5A623;
+    --green:#16A34A;
+    --bg:#F3F6FB;
+    --card:#FFFFFF;
+    --line:#E2E8F0;
+    --muted:#64748B;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:
+      radial-gradient(circle at 100% 0%, #E8F0FE 0%, transparent 45%),
+      radial-gradient(circle at 0% 100%, #FFF3E0 0%, transparent 40%),
+      var(--bg);
+    min-height:100vh;
+    color:var(--navy);
+  }
+  header{
+    position:sticky;
+    top:0;
+    z-index:200;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:rgba(243,246,251,.85);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .header-reset-btn{
+    width:36px;height:36px;
+    border-radius:10px;
+    border:1.5px solid #FCA5A5;
+    background:#FEF2F2;
+    color:#B91C1C;
+    font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    transition:background .15s, transform .12s;
+  }
+  .header-reset-btn:hover{background:#FEE2E2;}
+  .header-reset-btn:active{transform:scale(.94);}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(135deg,var(--blue),var(--teal));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 16px -4px rgba(43,108,176,.5);
+    flex-shrink:0;
+  }
+  .brand-mark svg{width:22px;height:22px;}
+  .brand h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:17px;
+    font-weight:700;
+    margin:0;
+    line-height:1.2;
+  }
+  .brand span{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:500;
+  }
+  .conn-dot{
+    display:flex;align-items:center;gap:6px;
+    font-size:11px;color:var(--muted);font-weight:600;
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:#CBD5E1;transition:background .3s;}
+  .dot.live{background:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.2);}
+
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin:0 20px 18px;
+    background:var(--card);
+    padding:5px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    max-width:420px;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    border-radius:10px;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--muted);
+    cursor:pointer;
+    border:none;
+    background:transparent;
+    font-family:inherit;
+    transition:all .2s;
+  }
+  .tab.active{
+    background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+    color:#fff;
+    box-shadow:0 4px 10px -2px rgba(43,108,176,.5);
+  }
+
+  main{padding:0 20px 100px; max-width:640px; margin:0 auto;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 8px -4px rgba(19,32,56,.08);
+  }
+  .card h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:15px;
+    margin:0 0 14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--muted);
+    margin-bottom:6px;
+    margin-top:14px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text]{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    font-size:14.5px;
+    font-family:inherit;
+    background:#FAFBFD;
+    transition:border-color .15s;
+  }
+  input[type=text]:focus{outline:none;border-color:var(--blue);background:#fff;}
+  button.submit{
+    margin-top:18px;
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--blue),var(--teal));
+    color:#fff;
+    font-weight:700;
+    font-size:14.5px;
+    font-family:inherit;
+    cursor:pointer;
+    box-shadow:0 6px 14px -4px rgba(43,108,176,.5);
+    transition:transform .12s;
+  }
+  button.submit:active{transform:scale(.98);}
+  button.submit:disabled{opacity:.6;cursor:default;}
+
+  .toggle-btn{
+    margin-top:10px;
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:#F7FAFD;
+    color:var(--navy);
+    font-weight:700;
+    font-size:13.5px;
+    font-family:inherit;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    transition:background .15s;
+  }
+  .toggle-btn:hover{background:#EEF3F9;}
+  .toggle-btn.open{
+    border-color:var(--teal);
+    background:#EAFBFA;
+  }
+  .chevron{
+    display:inline-block;
+    transition:transform .2s;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .chevron.open{transform:rotate(180deg);}
+  .collapse-panel{
+    margin-top:10px;
+    max-height:340px;
+    overflow-y:auto;
+  }
+
+  .pending-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-radius:12px;
+    background:#FFF8EC;
+    border:1px solid #FBE4B8;
+    margin-bottom:8px;
+  }
+  .pending-item.done{
+    background:#F0FBF4;
+    border-color:#BEEBCB;
+  }
+  .pending-badge{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--amber);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:15px;flex-shrink:0;
+  }
+  .pending-item.done .pending-badge{background:var(--green);}
+  .pending-koor{font-weight:700;font-size:14px;}
+  .pending-meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .pending-status{
+    margin-left:auto;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 9px;
+    border-radius:20px;
+    background:#FDECC8;
+    color:#92620A;
+    white-space:nowrap;
+  }
+  .pending-item.done .pending-status{background:#D3F3DC;color:#166534;}
+
+  .empty{
+    text-align:center;
+    padding:30px 10px;
+    color:var(--muted);
+    font-size:13.5px;
+  }
+
+  .mon-row{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .mon-row:last-child{border-bottom:none;}
+  .checkbox{
+    width:24px;height:24px;flex-shrink:0;
+    border-radius:7px;
+    border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    background:#fff;
+    margin-top:2px;
+    transition:all .15s;
+  }
+  .checkbox.checking{border-color:var(--teal);}
+  .mon-koor{font-weight:700;font-size:14.5px;}
+  .mon-meta{font-size:11.5px;color:var(--muted);margin-top:3px;}
+
+  .toast-wrap{
+    position:fixed;
+    top:16px;left:50%;
+    transform:translateX(-50%);
+    z-index:999;
+    display:flex;flex-direction:column;gap:8px;
+    width:calc(100% - 32px);
+    max-width:420px;
+  }
+  .toast{
+    background:linear-gradient(135deg,var(--green),#12864A);
+    color:#fff;
+    padding:14px 16px;
+    border-radius:12px;
+    font-size:13.5px;
+    font-weight:600;
+    display:flex;align-items:center;gap:10px;
+    box-shadow:0 10px 24px -6px rgba(22,163,74,.5);
+    animation:toastLife 1.5s ease forwards;
+  }
+  @keyframes toastLife{
+    0%{opacity:0;transform:translateY(-12px);}
+    12%{opacity:1;transform:translateY(0);}
+    78%{opacity:1;transform:translateY(0);}
+    100%{opacity:0;transform:translateY(-10px);}
+  }
+
+  .pin-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(19,32,56,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    padding:20px;
+  }
+  .pin-card{
+    background:#fff;
+    border-radius:18px;
+    padding:26px 22px;
+    width:100%;
+    max-width:320px;
+    text-align:center;
+    box-shadow:0 20px 40px -10px rgba(19,32,56,.35);
+  }
+  .pin-card .lock-icon{font-size:30px;margin-bottom:6px;}
+  .pin-card h3{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:16px;margin:0 0 4px;
+  }
+  .pin-card p{
+    font-size:12.5px;color:var(--muted);margin:0 0 16px;
+  }
+  .pin-input{
+    width:100%;
+    padding:14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    font-size:22px;
+    letter-spacing:8px;
+    text-align:center;
+    font-family:inherit;
+    background:#FAFBFD;
+    margin-bottom:10px;
+  }
+  .pin-input:focus{outline:none;border-color:var(--blue);}
+  .pin-error{
+    color:#DC2626;
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:10px;
+    min-height:16px;
+  }
+  .pin-actions{display:flex;gap:10px;}
+  .pin-actions button{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    font-weight:700;
+    font-size:13.5px;
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+  }
+  .pin-cancel{background:#F1F5F9;color:var(--navy);}
+  .pin-submit{background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
+
+  .count-pill{
+    font-size:11px;
+    font-weight:700;
+    background:var(--amber);
+    color:#fff;
+    padding:2px 8px;
+    border-radius:20px;
+    margin-left:6px;
+  }
+  .refresh-note{
+    text-align:center;font-size:11px;color:var(--muted);margin-top:14px;
+  }
+  .danger-card{
+    border-color:#FECACA;
+    background:#FFF9F9;
+  }
+  .btn-danger{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid #FCA5A5;
+    border-radius:10px;
+    background:#FEF2F2;
+    color:#B91C1C;
+    font-weight:700;
+    font-size:13.5px;
+    font-family:inherit;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:background .15s;
+  }
+  .btn-danger:hover{background:#FEE2E2;}
+  .btn-danger:disabled{opacity:.6;cursor:default;}
+  .danger-card p{
+    font-size:12px;color:var(--muted);margin:0 0 12px;
+  }
+  .confirm-card .lock-icon{color:#DC2626;}
+  .confirm-card h3{color:#B91C1C;}
+  .pin-submit.danger{background:linear-gradient(135deg,#DC2626,#B91C1C);}
+  .reset-check-row{
+    display:flex;align-items:flex-start;gap:8px;
+    text-align:left;
+    font-size:12px;color:var(--navy);
+    background:#FEF2F2;
+    border:1px solid #FCA5A5;
+    border-radius:10px;
+    padding:10px 12px;
+    margin-bottom:14px;
+  }
+  .reset-check-row input{margin-top:2px;}
+  .debug-note{
+    text-align:center;font-size:10.5px;color:#B45309;margin-top:8px;
+    background:#FFF7ED;border:1px dashed #FBBF6B;border-radius:8px;padding:8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3v13M12 16l-4-4M12 16l4-4M4 20h16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Barang Turun</h1>
+      <span>NDC J3 — Paragon</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="conn-dot"><span class="dot" id="connDot"></span><span id="connLabel">menghubungkan...</span></div>
+    <button type="button" class="header-reset-btn" id="btnHeaderReset" title="Reset semua data" style="display:none;" onclick="attemptResetAccess()">🗑️</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="input" onclick="switchTab('input')">📥 Input</button>
+  <button class="tab" data-tab="monitor" onclick="attemptMonitorAccess()">🔒 Monitoring</button>
+</div>
+
+<div class="pin-overlay" id="pinOverlay" style="display:none;">
+  <div class="pin-card">
+    <div class="lock-icon">🔒</div>
+    <h3>Akses Monitoring</h3>
+    <p>Menu ini khusus untuk yang berwenang. Masukkan kode akses.</p>
+    <input type="password" inputmode="numeric" maxlength="4" class="pin-input" id="pinInput" placeholder="••••" onkeydown="if(event.key==='Enter')submitPin()">
+    <div class="pin-error" id="pinError"></div>
+    <div class="pin-actions">
+      <button class="pin-cancel" onclick="closePinModal()">Batal</button>
+      <button class="pin-submit" onclick="submitPin()">Buka</button>
+    </div>
+  </div>
+</div>
+
+<div class="pin-overlay" id="resetOverlay" style="display:none;">
+  <div class="pin-card confirm-card">
+    <div class="lock-icon">⚠️</div>
+    <h3>Hapus SEMUA Data?</h3>
+    <p>Tindakan ini akan menghapus <strong>seluruh baris data</strong> di spreadsheet (belum turun maupun sudah turun) dan <strong>tidak bisa dibatalkan</strong>. Pastikan data sudah tidak dibutuhkan lagi.</p>
+    <div class="reset-check-row">
+      <input type="checkbox" id="resetCheckbox" onchange="document.getElementById('resetConfirmBtn').disabled = !this.checked;">
+      <label for="resetCheckbox" style="margin:0;font-weight:600;color:var(--navy);">Saya paham dan yakin ingin menghapus semua data</label>
+    </div>
+    <div class="pin-actions">
+      <button class="pin-cancel" onclick="closeResetModal()">Batal</button>
+      <button class="pin-submit danger" id="resetConfirmBtn" disabled onclick="confirmReset()">Hapus Semua</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ============ TAB INPUT ============ -->
+  <section id="tab-input">
+    <div class="card">
+      <h2>🧾 Lapor Koordinat Barang Turun</h2>
+      <label>Nama kamu (untuk notifikasi & riwayat)</label>
+      <input type="text" id="inpMyName" placeholder="nama kamu" onchange="saveMyName()">
+      <label>Koordinat barang</label>
+      <input type="text" id="inpKoordinat" placeholder="contoh: G2-R05-C12">
+      <button class="submit" id="btnSubmit" onclick="submitKoordinat()">Kirim ke Spreadsheet</button>
+
+      <button type="button" class="toggle-btn" id="btnToggleSudah" onclick="toggleSudahPanel()">
+        <span>✅ Laporan Sudah Turun</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span class="count-pill" id="sudahMyCount">0</span>
+          <span id="toggleChevron" class="chevron">▾</span>
+        </span>
+      </button>
+      <div id="sudahTurunPanel" class="collapse-panel" style="display:none;"></div>
+    </div>
+
+    <div class="card">
+      <h2>📄 Laporan Saya — Menunggu <span class="count-pill" id="myCount">0</span></h2>
+      <div id="myList"><div class="empty">Isi nama kamu dulu di atas</div></div>
+      <div class="refresh-note">Dicek tiap 3 detik — notifikasi muncul saat status berubah jadi "sudah turun"</div>
+    </div>
+  </section>
+
+  <!-- ============ TAB MONITORING (OPERATOR) ============ -->
+  <section id="tab-monitor" style="display:none;">
+    <div class="card">
+      <h2>⏳ Belum Turun <span class="count-pill" id="monBelumCount">0</span></h2>
+      <div id="monBelumList"><div class="empty">Memuat data...</div></div>
+      <div class="refresh-note">Centang kotak saat barang sudah diturunkan</div>
+    </div>
+
+    <div class="card">
+      <h2>✅ Sudah Turun <span class="count-pill" id="monSudahCount">0</span></h2>
+      <div id="monSudahList"><div class="empty">Memuat data...</div></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   ISI URL WEB APP GOOGLE APPS SCRIPT KAMU DI BAWAH INI
+   Cara: Extensions > Apps Script > tempel Code.gs > Deploy >
+   New deployment > Web app > Who has access: Anyone > Deploy
+
+   PENTING (agar jumlah "Sudah Turun" cocok dengan spreadsheet):
+   Backend (doGet) HARUS mengembalikan JSON dengan bentuk:
+   { data: [ { row, koordinat, operator, timestamp, belumTurun, sudahTurun }, ... ] }
+
+   - "belumTurun" diisi nilai apapun yang TIDAK kosong ketika barang
+     belum diturunkan (mis. tanggal input, atau string "BELUM").
+   - "sudahTurun" diisi nilai apapun yang TIDAK kosong (mis. timestamp
+     checklist) ketika baris itu SUDAH ditandai selesai di sheet.
+   - Field ini harus konsisten 1 baris = 1 status: kalau sebuah baris
+     sudah ditandai selesai, "sudahTurun" harus terisi dan "belumTurun"
+     idealnya dikosongkan supaya tidak terhitung dobel di kedua tab.
+
+   Jika nama kolom di Google Sheet kamu berbeda (mis. "Status",
+   "Tanggal Selesai", dsb), sesuaikan doGet() di Code.gs supaya
+   memetakan ke 6 field di atas — jangan ubah nama field di sisi
+   front-end ini, supaya konsisten dengan logika filter di bawah.
+   ============================================================ */
+const API_URL = "https://script.google.com/macros/s/AKfycbzNFgK2hnd1jKO9X03xpJPMAuaJfvl64b6Ems6VsTeEHbZzU2YwGhcrMx54KF-ovIPYKw/exec";
+
+const POLL_MS = 3000;
+let currentTab = 'input';
+let myName = localStorage.getItem('myName') || '';
+let seenStatus = JSON.parse(localStorage.getItem('seenStatus') || '{}'); // {row: 'SUDAH'|'BELUM'}
+
+document.getElementById('inpMyName').value = myName;
+
+function saveMyName(){
+  myName = document.getElementById('inpMyName').value.trim();
+  localStorage.setItem('myName', myName);
+  refreshMyData();
+}
+
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  document.getElementById('tab-input').style.display = tab==='input' ? 'block':'none';
+  document.getElementById('tab-monitor').style.display = tab==='monitor' ? 'block':'none';
+  document.getElementById('btnHeaderReset').style.display = tab==='monitor' ? 'flex':'none';
+  if(tab==='monitor') renderMonitor();
+}
+
+function setConn(ok){
+  document.getElementById('connDot').classList.toggle('live', ok);
+  document.getElementById('connLabel').textContent = ok ? 'tersambung' : 'terputus';
+}
+
+function showToast(msg){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span>✅</span><span>${msg}</span>`;
+  wrap.appendChild(el);
+  if (window.Notification && Notification.permission === 'granted') {
+    new Notification('Barang Turun', { body: msg });
+  }
+  el.addEventListener('animationend', () => el.remove());
+}
+
+// ============ Kunci PIN untuk tab Monitoring & tombol Reset ============
+const MONITOR_PIN = '6789';
+let pendingPinAction = 'monitor'; // 'monitor' atau 'reset' — menentukan apa yang terjadi setelah PIN benar
+
+function attemptMonitorAccess(){
+  pendingPinAction = 'monitor';
+  if(sessionStorage.getItem('monUnlocked') === '1'){
+    switchTab('monitor');
+    return;
+  }
+  openPinModal();
+}
+
+function attemptResetAccess(){
+  pendingPinAction = 'reset';
+  if(sessionStorage.getItem('monUnlocked') === '1'){
+    openResetModal();
+    return;
+  }
+  openPinModal();
+}
+
+function openPinModal(){
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinOverlay').style.display = 'flex';
+  setTimeout(()=>document.getElementById('pinInput').focus(), 50);
+}
+
+function closePinModal(){
+  document.getElementById('pinOverlay').style.display = 'none';
+}
+
+function submitPin(){
+  const val = document.getElementById('pinInput').value.trim();
+  if(val === MONITOR_PIN){
+    sessionStorage.setItem('monUnlocked', '1');
+    document.querySelector('.tab[data-tab="monitor"]').textContent = '✅ Monitoring';
+    closePinModal();
+    if(pendingPinAction === 'reset'){
+      openResetModal();
+    } else {
+      switchTab('monitor');
+    }
+  } else {
+    document.getElementById('pinError').textContent = 'Kode salah, coba lagi';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+if (window.Notification && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+async function apiGet(){
+  const res = await fetch(API_URL, { method:'GET' });
+  const json = await res.json();
+  return Array.isArray(json.data) ? json.data : [];
+}
+
+async function apiPost(body){
+  const res = await fetch(API_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+// Helper terpusat: satu definisi "sudah" / "belum" dipakai di semua tempat,
+// supaya jumlah yang ditampilkan selalu konsisten dengan data mentah dari sheet.
+function isSudah(d){ return (d.sudahTurun||'').toString().trim() !== ''; }
+function isBelum(d){ return !isSudah(d) && (d.belumTurun||'').toString().trim() !== ''; }
+
+async function submitKoordinat(){
+  saveMyName();
+  const koordinat = document.getElementById('inpKoordinat').value.trim();
+  if(!myName){ alert('Isi nama kamu dulu'); return; }
+  if(!koordinat){ alert('Isi koordinat barang dulu'); return; }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true; btn.textContent = 'Mengirim...';
+
+  try{
+    const result = await apiPost({ action:'add', koordinat, operator: myName });
+    if(result.success){
+      document.getElementById('inpKoordinat').value = '';
+      seenStatus[result.row] = 'BELUM';
+      localStorage.setItem('seenStatus', JSON.stringify(seenStatus));
+      refreshMyData();
+      setConn(true);
+    } else {
+      alert('Gagal mengirim: ' + (result.error || 'unknown'));
+    }
+  } catch(err){
+    setConn(false);
+    alert('Tidak bisa menghubungi spreadsheet. Cek koneksi / URL API.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Kirim ke Spreadsheet';
+  }
+}
+
+let sudahPanelOpen = false;
+let lastMineData = [];
+
+function toggleSudahPanel(){
+  sudahPanelOpen = !sudahPanelOpen;
+  const panel = document.getElementById('sudahTurunPanel');
+  const btn = document.getElementById('btnToggleSudah');
+  const chevron = document.getElementById('toggleChevron');
+  panel.style.display = sudahPanelOpen ? 'block' : 'none';
+  btn.classList.toggle('open', sudahPanelOpen);
+  chevron.classList.toggle('open', sudahPanelOpen);
+  if(sudahPanelOpen) renderSudahPanel();
+}
+
+function renderSudahPanel(){
+  const panel = document.getElementById('sudahTurunPanel');
+  const sudah = lastMineData.filter(isSudah);
+  if(sudah.length === 0){
+    panel.innerHTML = '<div class="empty">Belum ada barang yang sudah turun</div>';
+    return;
+  }
+  panel.innerHTML = sudah.slice().reverse().slice(0,30).map(d => `
+    <div class="pending-item done">
+      <div class="pending-badge">✓</div>
+      <div>
+        <div class="pending-koor">${escapeHtml(d.koordinat)}</div>
+        <div class="pending-meta">Nama: ${escapeHtml(myName)} · ${formatTime(d.timestamp)}</div>
+      </div>
+      <div class="pending-status">SUDAH TURUN</div>
+    </div>
+  `).join('');
+}
+
+// ============ Ambil & render data tab Input (1x fetch untuk semua bagian) ============
+async function refreshMyData(){
+  if(!myName){
+    document.getElementById('myList').innerHTML = '<div class="empty">Isi nama kamu dulu di atas</div>';
+    document.getElementById('myCount').textContent = '0';
+    document.getElementById('sudahMyCount').textContent = '0';
+    return;
+  }
+  try{
+    const data = await apiGet();
+    setConn(true);
+    const mine = data.filter(d => (d.operator||'').trim().toLowerCase() === myName.toLowerCase());
+    lastMineData = mine;
+
+    const pending = mine.filter(isBelum);
+    const sudah = mine.filter(isSudah);
+
+    document.getElementById('myCount').textContent = pending.length;
+    document.getElementById('sudahMyCount').textContent = sudah.length;
+
+    const list = document.getElementById('myList');
+    list.innerHTML = pending.length === 0
+      ? '<div class="empty">Tidak ada laporan yang menunggu</div>'
+      : pending.slice().reverse().slice(0,20).map(d => `
+        <div class="pending-item">
+          <div class="pending-badge">⏳</div>
+          <div>
+            <div class="pending-koor">${escapeHtml(d.koordinat)}</div>
+            <div class="pending-meta">Nama: ${escapeHtml(myName)} · ${formatTime(d.timestamp)}</div>
+          </div>
+          <div class="pending-status">BELUM TURUN</div>
+        </div>
+      `).join('');
+
+    if(sudahPanelOpen) renderSudahPanel();
+    checkMyNotifications(mine);
+  } catch(err){
+    setConn(false);
+  }
+}
+
+function checkMyNotifications(mine){
+  let changed = false;
+  mine.forEach(d => {
+    const done = isSudah(d);
+    const prev = seenStatus[d.row];
+    if(prev === undefined){
+      seenStatus[d.row] = done ? 'SUDAH' : 'BELUM';
+      changed = true;
+    } else if(done && prev !== 'SUDAH'){
+      seenStatus[d.row] = 'SUDAH';
+      changed = true;
+      showToast(`${myName}, barang di ${d.koordinat} sudah turun!`);
+    }
+  });
+  if(changed) localStorage.setItem('seenStatus', JSON.stringify(seenStatus));
+}
+
+// ============ Monitoring (tab Operator) — dipisah belum turun & sudah turun ============
+async function renderMonitor(){
+  const belumList = document.getElementById('monBelumList');
+  const sudahList = document.getElementById('monSudahList');
+  try{
+    const data = await apiGet();
+    setConn(true);
+
+    const belum = data.filter(isBelum);
+    const sudah = data.filter(isSudah);
+
+    document.getElementById('monBelumCount').textContent = belum.length;
+    document.getElementById('monSudahCount').textContent = sudah.length;
+
+    belumList.innerHTML = belum.length === 0
+      ? '<div class="empty">Semua barang sudah turun 🎉</div>'
+      : belum.map(d => `
+        <div class="mon-row">
+          <div class="checkbox" onclick="markSelesai(${d.row}, this)"></div>
+          <div>
+            <div class="mon-koor">${escapeHtml(d.koordinat)}</div>
+            <div class="mon-meta">${d.operator ? escapeHtml(d.operator)+' · ':''}${formatTime(d.timestamp)}</div>
+          </div>
+        </div>
+      `).join('');
+
+    sudahList.innerHTML = sudah.length === 0
+      ? '<div class="empty">Belum ada yang selesai</div>'
+      : sudah.slice().reverse().slice(0,30).map(d => `
+        <div class="mon-row">
+          <div class="checkbox" style="background:var(--green);border-color:var(--green);color:#fff;">✓</div>
+          <div>
+            <div class="mon-koor">${escapeHtml(d.koordinat)}</div>
+            <div class="mon-meta">${d.operator ? escapeHtml(d.operator)+' · ':''}${formatTime(d.timestamp)}</div>
+          </div>
+        </div>
+      `).join('');
+  } catch(err){
+    setConn(false);
+    belumList.innerHTML = '<div class="empty">Tidak bisa memuat data. Cek URL API / koneksi.</div>';
+    sudahList.innerHTML = '';
+  }
+}
+
+async function markSelesai(row, el){
+  el.classList.add('checking');
+  el.textContent = '⏳';
+  try{
+    const result = await apiPost({ action:'update', row });
+    if(result.success){
+      renderMonitor();
+    } else {
+      alert('Gagal update: ' + (result.error||'unknown'));
+      el.classList.remove('checking'); el.textContent='';
+    }
+  } catch(err){
+    alert('Tidak bisa menghubungi spreadsheet.');
+    el.classList.remove('checking'); el.textContent='';
+  }
+}
+
+// ============ Reset semua data (Monitoring) ============
+function openResetModal(){
+  document.getElementById('resetCheckbox').checked = false;
+  document.getElementById('resetConfirmBtn').disabled = true;
+  document.getElementById('resetOverlay').style.display = 'flex';
+}
+
+function closeResetModal(){
+  document.getElementById('resetOverlay').style.display = 'none';
+}
+
+async function confirmReset(){
+  const btn = document.getElementById('resetConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = 'Menghapus...';
+  try{
+    const result = await apiPost({ action:'reset' });
+    if(result.success){
+      closeResetModal();
+      showToast('Semua data berhasil dihapus');
+      renderMonitor();
+      refreshMyData();
+    } else {
+      alert('Gagal reset: ' + (result.error || 'unknown'));
+    }
+  } catch(err){
+    alert('Tidak bisa menghubungi spreadsheet.');
+  } finally {
+    btn.textContent = 'Hapus Semua';
+    btn.disabled = !document.getElementById('resetCheckbox').checked;
+  }
+}
+
+function formatTime(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d)) return iso;
+  return d.toLocaleString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+function escapeHtml(s){
+  return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// init
+refreshMyData();
+setInterval(() => {
+  refreshMyData();
+  if(currentTab === 'monitor') renderMonitor();
+}, POLL_MS);
+</script>
+</body>
+</html>
